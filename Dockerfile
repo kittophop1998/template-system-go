@@ -40,4 +40,4 @@ COPY configs/ /root/configs/
 EXPOSE 8080
 
 # Run the binary
-CMD ["./main"]
+CMD ["./server"]
