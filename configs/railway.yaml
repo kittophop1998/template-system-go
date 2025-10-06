@@ -13,3 +13,6 @@ storage:
   host: "bucket.railway.internal"
   port: 9000
   bucket_name: "my-bucket"
+  access_key: "XMy6l0GBMBuZ9PjUkJWRAOX2YE0f9Lza"
+  secret_key: "0fF1Ev3Rg833j9To1dndTec37GqSIX1bnT0gAlJjUUOcWHL1"
+  region: "us-east-1"

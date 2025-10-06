@@ -39,6 +39,9 @@ type StorageConfig struct {
 	Host       string `yaml:"host"`
 	Port       int    `yaml:"port"`
 	BucketName string `yaml:"bucket_name"`
+	AccessKey  string `yaml:"access_key"`
+	SecretKey  string `yaml:"secret_key"`
+	Region     string `yaml:"region"`
 }
 
 var (
