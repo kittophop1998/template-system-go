@@ -10,6 +10,6 @@ server:
   log_level: "info"  # Logging level: "debug", "info", "warn", "error"
 
 storage:
-  host: "localhost"
-  port: 9010
+  host: "bucket.railway.internal"
+  port: 9000
   bucket_name: "my-bucket"
