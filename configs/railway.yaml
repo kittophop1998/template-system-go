@@ -1,0 +1,15 @@
+# Application Configuration
+app:
+  name: "Template App"
+  version: "1.0.0"
+
+# Server Configuration
+server:
+  port: 8080
+  gin_mode: "debug"  # Mode: "debug", "release"
+  log_level: "info"  # Logging level: "debug", "info", "warn", "error"
+
+storage:
+  host: "localhost"
+  port: 9010
+  bucket_name: "my-bucket"

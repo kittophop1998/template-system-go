@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -14,6 +15,13 @@ import (
 var DBStore *gorm.DB
 
 func InitializePostgres(dsn string) (*gorm.DB, error) {
+	env := os.Getenv("ENV_NAME")
+	dsnRailway := os.Getenv("DATABASE_URL")
+
+	if env == "railway" && dsnRailway != "" {
+		dsn = dsnRailway
+	}
+
 	cfg, err := pgx.ParseConfig(dsn)
 	if err != nil {
 		return nil, err
