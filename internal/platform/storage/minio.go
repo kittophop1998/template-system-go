@@ -18,9 +18,9 @@ func NewS3Client(common *setting.Config) *s3.Client {
 	// ถ้ารันนอก Docker ใช้ "localhost"
 	endpoint := fmt.Sprintf("http://%s:%d", common.Storage.Host, common.Storage.Port)
 
-	accessKey := "minioadmin"
-	secretKey := "minioadmin"
-	region := "us-east-1"
+	accessKey := common.Storage.AccessKey
+	secretKey := common.Storage.SecretKey
+	region := common.Storage.Region
 
 	customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 		return aws.Endpoint{
