@@ -1,9 +1,9 @@
-name: Go CI
+name: Go CI/CD
 
 on:
   push:
     branches:
-      - main # จะ deploy เมื่อ push เข้า main
+      - main # deploy เมื่อ push เข้า main
 
 jobs:
   build-and-test:
@@ -21,8 +21,33 @@ jobs:
       - name: Install dependencies
         run: go mod tidy
 
+      - name: Run tests
+        run: go test ./... -v
+
       - name: Build binary
         run: go build -o app ./cmd/server
+
+      # Upload binary เป็น artifact สำหรับ job deploy
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-binary
+          path: app
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ดาวน์โหลด artifact จาก build
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: app-binary
+          path: .
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli
