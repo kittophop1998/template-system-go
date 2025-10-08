@@ -13,6 +13,7 @@ type Config struct {
 	Server   ServerConfig   `yaml:"server"`
 	Database DatabaseConfig `yaml:"database"`
 	Storage  StorageConfig  `yaml:"storage"`
+	Mail     MailConfig     `yaml:"mail"`
 }
 
 type AppConfig struct {
@@ -42,6 +43,15 @@ type StorageConfig struct {
 	AccessKey  string `yaml:"access_key"`
 	SecretKey  string `yaml:"secret_key"`
 	Region     string `yaml:"region"`
+}
+
+type MailConfig struct {
+	Host               string `yaml:"host"`
+	Port               int    `yaml:"port"`
+	Username           string `yaml:"username"`
+	Password           string `yaml:"password"`
+	From               string `yaml:"from"`
+	InsecureSkipVerify bool   `yaml:"insecure_skip_verify"`
 }
 
 var (

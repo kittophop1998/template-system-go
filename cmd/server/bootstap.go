@@ -40,11 +40,13 @@ func initializeApp(cfg *config.Config) (*gin.Engine, error) {
 		S3:     s3Client,
 		Bucket: cfg.Storage.BucketName,
 	}
+	MailUC := usecase.NewMailUsecase(cfg.Mail)
 
 	// ===== Initialize Handlers =====
 	handlers := http.InitializeHandlers(&http.HandlerDependency{
 		UserUC:       userUC,
 		AttachmentUC: attachmentUC,
+		MailUC:       MailUC,
 	})
 
 	// ===== Setup Router =====

@@ -22,3 +22,14 @@ storage:
   host: "localhost"
   port: 9010
   bucket_name: "my-bucket"
+  access_key: "minioadmin"
+  secret_key: "minioadmin"
+  region: "us-west2"
+
+mail:
+  host: "smtp.mailtrap.io"
+  port: 587
+  username: "b7173fa8081cc5"
+  password: "061765b29425a0"
+  from: "no-reply@yourapp.com"
+  insecure_skip_verify: true
