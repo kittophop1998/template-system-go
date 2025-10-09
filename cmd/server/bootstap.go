@@ -33,20 +33,18 @@ func initializeApp(cfg *config.Config) (*gin.Engine, error) {
 
 	// ===== Initialize Repositories =====
 	userRepo := database.NewUserPostGres(db)
+	attachmentRepo := database.NewAttachmentPostGres(db)
 
 	// ===== Initialize UseCases =====
 	userUC := usecase.NewUserUseCase(userRepo)
-	attachmentUC := &usecase.AttachmentUseCase{
-		S3:     s3Client,
-		Bucket: cfg.Storage.BucketName,
-	}
-	MailUC := usecase.NewMailUsecase(cfg.Mail)
+	attachmentUC := usecase.NewAttachmentUseCase(s3Client, cfg.Storage.BucketName, attachmentRepo)
+	mailUC := usecase.NewMailUsecase(cfg.Mail)
 
 	// ===== Initialize Handlers =====
 	handlers := http.InitializeHandlers(&http.HandlerDependency{
 		UserUC:       userUC,
 		AttachmentUC: attachmentUC,
-		MailUC:       MailUC,
+		MailUC:       mailUC,
 	})
 
 	// ===== Setup Router =====

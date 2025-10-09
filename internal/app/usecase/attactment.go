@@ -3,35 +3,64 @@ package usecase
 import (
 	"bytes"
 	"context"
+	"file_storage_service/internal/domain/model"
+	"file_storage_service/internal/domain/repository"
 	"fmt"
 	"mime/multipart"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 type AttachmentUseCase struct {
 	S3     *s3.Client
 	Bucket string
+	Repo   repository.AttachmentRepository
 }
 
-func (fs *AttachmentUseCase) UploadFile(file multipart.File, header *multipart.FileHeader) (string, error) {
-	buf := new(bytes.Buffer)
-	_, err := buf.ReadFrom(file)
-	if err != nil {
-		return "", err
+func NewAttachmentUseCase(s3Client *s3.Client, bucket string, repo repository.AttachmentRepository) *AttachmentUseCase {
+	return &AttachmentUseCase{
+		S3:     s3Client,
+		Bucket: bucket,
+		Repo:   repo,
 	}
+}
+
+func (fs *AttachmentUseCase) UploadFile(ctx context.Context, file multipart.File, header *multipart.FileHeader) (string, error) {
+	defer file.Close()
 
 	key := header.Filename
 
-	_, err = fs.S3.PutObject(context.TODO(), &s3.PutObjectInput{
-		Bucket: &fs.Bucket,
-		Key:    &key,
-		Body:   bytes.NewReader(buf.Bytes()),
+	// Upload file (streaming, no full buffer)
+	_, err := fs.S3.PutObject(ctx, &s3.PutObjectInput{
+		Bucket:      &fs.Bucket,
+		Key:         &key,
+		Body:        file,
+		ContentType: aws.String(header.Header.Get("Content-Type")),
 	})
 	if err != nil {
-		fmt.Printf("failed to upload file to S3: %v", err)
-		return "", err
+		return "", fmt.Errorf("failed to upload file to S3: %w", err)
 	}
+
+	// Retrieve file metadata
+	headResp, err := fs.S3.HeadObject(ctx, &s3.HeadObjectInput{
+		Bucket: &fs.Bucket,
+		Key:    &key,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to get file metadata: %w", err)
+	}
+
+	// ===== Save attachment metadata =====
+	attachmentMeta := model.Attachment{
+		FileName: header.Filename,
+		Size:     aws.ToInt64(headResp.ContentLength),
+	}
+
+	if err := fs.Repo.SaveAttachName(&attachmentMeta); err != nil {
+		return "", fmt.Errorf("failed to save attachment metadata: %w", err)
+	}
+	// =====================================
 
 	return key, nil
 }

@@ -20,7 +20,8 @@ func (h *AttachmentHandler) Upload(c *gin.Context) {
 	src, _ := file.Open()
 	defer src.Close()
 
-	key, err := h.AttachmentUC.UploadFile(src, file)
+	ctx := c.Request.Context()
+	key, err := h.AttachmentUC.UploadFile(ctx, src, file)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to upload file"})
 		return

@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"file_storage_service/internal/domain/model"
 	"log"
 	"os"
 	"time"
@@ -54,5 +55,11 @@ func InitializePostgres(dsn string) (*gorm.DB, error) {
 
 // ===== Database Migration =====
 func Migrate(db *gorm.DB) error {
+	if err := db.AutoMigrate(
+		&model.User{},
+		&model.Attachment{},
+	); err != nil {
+		log.Printf("Database migration failed: %v", err)
+	}
 	return nil
 }
